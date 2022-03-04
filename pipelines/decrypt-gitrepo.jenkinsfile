@@ -1,0 +1,32 @@
+pipeline
+{
+	agent any
+	stages
+	{
+	    
+		stage('Cloning Encrypted Git Repo....')
+		{
+			steps
+			{
+			    deleteDir();
+				echo "Build started - checking git repo for code!";
+			    git branch: 'main', credentialsId: 'BADEMIYA551-Github', url: 'https://github.com/BADEMIYA551/Demo.git';
+			    echo "================================= Git repo cloned successfully =================================";
+				
+			}
+		}
+		
+		stage('Decrypt the Encrypted Git Repo....')
+		{
+			steps
+			{
+			    
+		        script { demo_repo_key = "git-demo-key" }
+                withCredentials([file(credentialsId: "${demo_repo_key}", variable: 'GIT_CRYPT_KEY')]) { bat('git-crypt unlock %GIT_CRYPT_KEY%') }
+				
+			}
+		}
+		
+
+	}
+}
