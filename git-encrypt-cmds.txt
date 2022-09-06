@@ -1,0 +1,58 @@
+================ Creating a local repo, encrypting secret files and pushing to remote repo ================
+1) install git 
+-------------------
+git --version
+sudo apt update
+sudo apt install git
+
+2) install git-crypt
+-----------------------
+git-crypt -v
+sudo apt install git-crypt
+
+3) local repo creation
+--------------------------------
+mkdir proj1
+cd proj1/
+git init
+echo "sample data" > file1.txt
+git add file1.txt
+git commit -m "adds sample file - file1.txt"
+
+git-crypt init
+git-crypt export-key ../git-crypt-key-proj1
+echo "file2.txt filter=git-crypt diff=git-crypt" > .gitattributes
+git add .gitattributes
+git commit -m "tells which files to encrypt"
+
+
+echo "my secret value" > file2.txt
+git-crypt status
+git add file2.txt
+git commit -m "adds secret file - file2.txt"
+
+git remote add origin https://github.com/BADEMIYA551/test-encrypt.git
+git branch -M main
+git push -u origin main
+provide: GIT Uname & access token
+
+
+
+============ Cloning remote repo with encrypted files into local PC & decrypting files  =================
+1) preparing local folder to clone the remote content
+--------------------------------------------------------------------
+mkdir proj1-copy
+cd proj1-copy
+
+
+2) cloning and checking the content of files
+--------------------------------------------------------------------
+git clone https://github.com/BADEMIYA551/test-encrypt.git
+cd test-encrypt/
+cat file1.txt
+cat file2.txt
+
+3) decrypting the encrypted files
+--------------------------------------------------------------------
+git-crypt unlock ../../git-crypt-key-proj1
+
